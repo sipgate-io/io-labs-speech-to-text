@@ -1,0 +1,44 @@
+{
+    "extends": "airbnb-base",
+    "rules": {
+        "import/order": [
+            "error",
+            {
+                "newlines-between": "always",
+                "alphabetize": {
+                    "order": "asc"
+                }
+            }
+        ],
+        "import/extensions": [
+            "off",
+            "ignorePackages"
+        ],
+        "sort-imports": [
+            "error",
+            {
+                "ignoreDeclarationSort": true,
+                "ignoreCase": true
+            }
+        ],
+        "quotes": [
+            "error",
+            "double",
+            {
+                "allowTemplateLiterals": true,
+                "avoidEscape": true
+            }
+        ],
+        "indent": [
+            "error",
+            2
+        ],
+        "no-console": "off",
+        "no-restricted-syntax": [
+            "error",
+            "ForInStatement",
+            "LabeledStatement",
+            "WithStatement"
+        ]
+    }
+}
