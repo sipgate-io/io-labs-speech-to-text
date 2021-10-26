@@ -40,12 +40,6 @@ const convertMp3ToText = (path) => ffmpeg(path)
       `An error occurred while converting the stream: ${err.message}`,
     );
   })
-  .on("progress", (progress) => {
-    console.log(`Processing: ${progress.targetSize} KB converted`);
-  })
-  .on("end", () => {
-    console.log("Processing finished!");
-  })
   .pipe(getWfReader());
 
 export default convertMp3ToText;
