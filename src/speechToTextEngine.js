@@ -7,7 +7,9 @@ import { Reader } from "wav";
 
 const MODEL_PATH = "model";
 if (!existsSync(MODEL_PATH)) {
-  console.log(`Please download the model from https://alphacephei.com/vosk/models and unpack as ${MODEL_PATH} in the root folder.`);
+  console.log(
+    `Please download the model from https://alphacephei.com/vosk/models and unpack as ${MODEL_PATH} in the root folder.`,
+  );
   process.exit();
 }
 
@@ -32,14 +34,15 @@ const getWfReader = () => {
   return wfReader;
 };
 
-const convertMp3ToText = (path) => ffmpeg(path)
-  .audioFrequency(16000)
-  .toFormat("wav")
-  .on("error", (err) => {
-    console.log(
-      `An error occurred while converting the stream: ${err.message}`,
-    );
-  })
-  .pipe(getWfReader());
+const convertMp3ToText = (path) =>
+  ffmpeg(path)
+    .audioFrequency(16000)
+    .toFormat("wav")
+    .on("error", (err) => {
+      console.log(
+        `An error occurred while converting the stream: ${err.message}`,
+      );
+    })
+    .pipe(getWfReader());
 
 export default convertMp3ToText;
