@@ -5,6 +5,7 @@ import ffmpeg from "fluent-ffmpeg";
 import * as vosk from "vosk";
 import { Reader } from "wav";
 
+// Check if the VOSK model is downloaded
 const MODEL_PATH = "model";
 if (!existsSync(MODEL_PATH)) {
   console.log(
@@ -16,26 +17,34 @@ if (!existsSync(MODEL_PATH)) {
 vosk.setLogLevel(-1);
 const model = new vosk.Model(MODEL_PATH);
 
-const getWfReader = () => {
-  const wfReader = new Reader();
-  const wfReadable = new Readable().wrap(wfReader);
+// Configure a vosk waveform reader
+const getWaveformReader = () => {
+  const waveformReader = new Reader();
+  const waveformReadable = new Readable().wrap(waveformReader);
 
-  wfReader.on("format", async ({ sampleRate }) => {
-    const rec = new vosk.Recognizer({
+  waveformReader.on("format", async ({ sampleRate }) => {
+    // Create a new Recognizer
+    const recognizer = new vosk.Recognizer({
       model,
       sampleRate,
     });
-    for await (const data of wfReadable) {
-      rec.acceptWaveform(data);
+
+    // read the audio chunks
+    for await (const data of waveformReadable) {
+      recognizer.acceptWaveform(data);
     }
-    console.log(`Voicemail content: "${rec.finalResult().text}"`);
-    rec.free();
+
+    // print the final result
+    console.log(`Voicemail content: "${recognizer.finalResult().text}"`);
+    recognizer.free();
   });
-  return wfReader;
+  return waveformReader;
 };
 
-const convertMp3ToText = (path) =>
-  ffmpeg(path)
+// The model only accepts WAV files, so we need to convert the mp3 recording
+// to a WAV audio stream beforehand.
+const convertMp3ToText = (mp3Url) =>
+  ffmpeg(mp3Url)
     .audioFrequency(16000)
     .toFormat("wav")
     .on("error", (err) => {
@@ -43,6 +52,6 @@ const convertMp3ToText = (path) =>
         `An error occurred while converting the stream: ${err.message}`,
       );
     })
-    .pipe(getWfReader());
+    .pipe(getWaveformReader());
 
 export default convertMp3ToText;
